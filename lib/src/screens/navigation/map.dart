@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -22,7 +20,7 @@ class NavigationMapController {
     _state?._mapController.moveCamera(where);
   }
 
-  CustomPoint<num>? latLngToScreenPoint(LatLng latLng) {
+  Offset? latLngToScreenPoint(LatLng latLng) {
     return _state?._fakeGpsKey.currentState?.latLngToScreenPoint(latLng);
   }
 }
@@ -134,8 +132,8 @@ class _FakeGpsOverlayState extends State<_FakeGpsOverlay> {
     controller.move(center, zoom);
   }
 
-  Point<num>? latLngToScreenPoint(LatLng latLng) {
-    return controller.camera.latLngToScreenPoint(latLng);
+  Offset? latLngToScreenPoint(LatLng latLng) {
+    return controller.camera.latLngToScreenOffset(latLng);
   }
 
   @override

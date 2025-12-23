@@ -2,20 +2,20 @@ package org.tourforge.baseline
 
 import android.content.Context
 import android.view.View
-import com.mapbox.android.gestures.MoveGestureDetector
-import com.mapbox.android.gestures.StandardScaleGestureDetector
-import com.mapbox.geojson.FeatureCollection
+import org.maplibre.android.gestures.MoveGestureDetector
+import org.maplibre.android.gestures.StandardScaleGestureDetector
+import org.maplibre.geojson.FeatureCollection
 import io.flutter.plugin.platform.PlatformView
-import com.mapbox.mapboxsdk.maps.MapView
-import com.mapbox.mapboxsdk.camera.CameraPosition
-import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
-import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.mapboxsdk.maps.MapboxMap
-import com.mapbox.mapboxsdk.maps.MapboxMapOptions
-import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.plugins.annotation.CircleManager
-import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import org.maplibre.android.maps.MapView
+import org.maplibre.android.camera.CameraPosition
+import org.maplibre.android.MapLibre
+import org.maplibre.android.camera.CameraUpdateFactory
+import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.maps.MapLibreMap
+import org.maplibre.android.maps.MapLibreMapOptions
+import org.maplibre.android.maps.Style
+import org.maplibre.android.plugins.annotation.CircleManager
+import org.maplibre.android.style.sources.GeoJsonSource
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -30,7 +30,7 @@ class MapLibrePlatformView(
     private val mapView: MapView
     private val channel = MethodChannel(messenger, "tourforge.org/baseline/map")
     private lateinit var locationSource: GeoJsonSource
-    private var map: MapboxMap? = null
+    private var map: MapLibreMap? = null
 
     private var stylePath: String
     private var pathGeoJson: String
@@ -54,7 +54,7 @@ class MapLibrePlatformView(
         channel.setMethodCallHandler { call, result -> handleMethodCall(call, result) }
 
         // Initialize MapLibre
-        Mapbox.getInstance(context)
+        MapLibre.getInstance(context)
 
         stylePath = creationParams["stylePath"] as String
         pathGeoJson = creationParams["pathGeoJson"] as String
@@ -63,7 +63,7 @@ class MapLibrePlatformView(
 
         var centerMap = creationParams["center"] as Map<*, *>
 
-        val options = MapboxMapOptions
+        val options = MapLibreMapOptions
             .createFromAttributes(context)
             .textureMode(true)
             .attributionEnabled(false)
@@ -82,7 +82,7 @@ class MapLibrePlatformView(
     }
 
     private fun handleMapLoaded(
-        map: MapboxMap,
+        map: MapLibreMap,
         stylePath: String,
         lat: Double,
         lng: Double,
@@ -145,7 +145,7 @@ class MapLibrePlatformView(
             )
         }
 
-        map.addOnMoveListener(object : MapboxMap.OnMoveListener {
+        map.addOnMoveListener(object : MapLibreMap.OnMoveListener {
             override fun onMove(detector: MoveGestureDetector) {
                 channel.invokeMethod("moveUpdate", null)
             }
@@ -159,7 +159,7 @@ class MapLibrePlatformView(
             }
         })
 
-        map.addOnScaleListener(object : MapboxMap.OnScaleListener {
+        map.addOnScaleListener(object : MapLibreMap.OnScaleListener {
             override fun onScale(detector: StandardScaleGestureDetector) {
                 channel.invokeMethod("moveUpdate", null)
             }

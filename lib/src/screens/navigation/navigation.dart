@@ -276,7 +276,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     var b =
                         _mapController.latLngToScreenPoint(_cameraLocation)!;
 
-                    if (a.distanceTo(b) > 48) {
+                    if ((a - b).distance > 48) {
                       _mapControlledness.value = false;
                     }
                   },
@@ -430,8 +430,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     tour: widget.tour,
                     playWaypoint: (waypointIdx) {
                       _currentWaypoint.index = waypointIdx;
-                      NarrationPlaybackController.instance
-                          .playWaypoint(waypointIdx);
                     },
                   ),
                 ),

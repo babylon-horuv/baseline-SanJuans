@@ -89,16 +89,26 @@ class NarrationPlaybackController extends BaseAudioHandler with SeekHandler {
     _currentIndex = index;
     _currentNarration = tour.route[index].narration;
 
-    await _player.stop();
+    final mediaItem = await buildMediaItem(tour.route[index]);
+    if (_currentIndex != index) return;
 
-    mediaItem.add(await buildMediaItem(tour.route[index]));
+    this.mediaItem.add(mediaItem);
     if (_currentNarration == null) {
       _onStateChanged.add(null);
       _updatePlaybackState();
     } else {
-      await _player.setAudioSource(
-          ProgressiveAudioSource(Uri.file(_currentNarration!.localPath)));
-      await play();
+      try {
+        await _player.setAudioSource(
+            ProgressiveAudioSource(Uri.file(_currentNarration!.localPath)));
+        await play();
+      } on PlayerInterruptedException {
+        // This call was interrupted by a subsequent playback request.
+        // We catch this exception to allow the new request to proceed without crashing.
+      } on PlayerException catch (e) {
+        debugPrint("NarrationPlaybackController: Player error: ${e.message}");
+      } catch (e) {
+        debugPrint("NarrationPlaybackController: Unknown error: $e");
+      }
     }
   }
 
